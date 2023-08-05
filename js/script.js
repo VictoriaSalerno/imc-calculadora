@@ -1,9 +1,10 @@
 function calculadoraImc() {
-    let nombre = prompt("Bienvenido a la calculadora de indice de masa corporal, ¿Cual es su nombre?");
+    let nombre = prompt("Bienvenido a la calculadora de indice de masa corporal, ¿Cual es su nombre? [Ingrese Y para salir]");
     console.log(nombre);
-    let peso = prompt (nombre + ", ingresa tu peso en kg.");
+    while (nombre != "Y"){
+    let peso = parseFloat (prompt (nombre + ", ingresa tu peso en kg."));
     console.log(peso + ".00");
-    let altura = (prompt(nombre + ", Ingresa tu altura en cm y con punto. Ej: 1.56"));
+    let altura = parseFloat (prompt(nombre + ", Ingresa tu altura en cm y con punto. Ej: 1.56"));
     console.log(altura);
     let altura2=  (altura*altura);
     console.log(altura2);
@@ -44,7 +45,6 @@ else if (valor<=35.00 || valor<=40.00)
      alert("No existe clasificacion");
  }
 }
-
-
+}
 
 calculadoraImc()
