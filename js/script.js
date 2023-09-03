@@ -29,15 +29,27 @@ const CalculadoraIMC = {
 
     agregarRegistro: function(nombre, peso, altura, imc, categoria) {
         this.registros.push({ nombre, peso, altura, imc, categoria });
+
+        localStorage.setItem("registros", JSON.stringify(this.registros));
     },
 
+    cargarRegistrosDesdeLocalStorage: function() {
+        const registrosGuardados = localStorage.getItem("registros");
+        if (registrosGuardados) {
+            this.registros = JSON.parse(registrosGuardados);
+        }
+    },
+    
     buscarPorNombre: function(nombre) {
         return this.registros.find(persona => persona.nombre === nombre);
+
     },
 
     filtrarPorCategoria: function(categoria) {
         return this.registros.filter(persona => persona.categoria === categoria);
     },
+    
+    
 
     mostrarRegistrosEnConsola: function() {
         console.log("Registros almacenados:");
@@ -51,29 +63,37 @@ const CalculadoraIMC = {
         });
     },
 
-    iniciarCalculadora: function() {
+          iniciarCalculadora: function() {
+                const formulario = document.getElementById("calculadoraForm");
+                const resultadoDiv = document.getElementById("resultado");
+          
 
-        const maxRegistros = 1
-        
-        for (let i = 0; i < maxRegistros; i++) {
-            let nombre = prompt("Bienvenido a la calculadora de índice de masa corporal, ¿Cuál es su nombre?");
-            
-            if (!nombre) {
-                break;
-            }
-     
-            let peso = parseFloat(prompt(nombre + ", ingresa tu peso en kg."));
-            let altura = parseFloat(prompt(nombre + ", Ingresa tu altura en cm y con punto. Ej: 1.56"));
-            const imc = this.calcularIMC(peso, altura);
-            const categoria = this.obtenerCategoria(imc);
-            
-            this.agregarRegistro(nombre, peso, altura, imc, categoria);
-            
-            alert(nombre + ", tu IMC es: " + imc.toFixed(2) + "\n" + categoria);
+                formulario.addEventListener("submit", (event) => {
+                    event.preventDefault();
+                    
+                    const nombre = document.getElementById("nombre").value;
+                    const peso = parseFloat(document.getElementById("peso").value);
+                    const altura = parseFloat(document.getElementById("altura").value);
+                    const imc = this.calcularIMC(peso, altura);
+                    const categoria = this.obtenerCategoria(imc);
+                    this.agregarRegistro(nombre, peso, altura, imc, categoria);
+
+                    const resultadoHTML = `
+                        <h2>Resultados para ${nombre}:</h2>
+                        <p>IMC: ${imc.toFixed(2)}</p>
+                        <p>Categoría: ${categoria}</p>
+                    `;
+                    resultadoDiv.innerHTML = resultadoHTML;
+
+                    formulario.reset();
+                
+           this.mostrarRegistrosEnConsola()
+           
+                })
+
         }
+            }
         
-        this.mostrarRegistrosEnConsola();
-    }
-};
 
+CalculadoraIMC.cargarRegistrosDesdeLocalStorage();
 CalculadoraIMC.iniciarCalculadora();
