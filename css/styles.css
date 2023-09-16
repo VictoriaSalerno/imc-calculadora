@@ -41,7 +41,7 @@ body {
 #title{
     font-size: 2.25rem;
     position: relative;
-    background-color: #d89ace;
+    
     
 }
 
@@ -81,7 +81,7 @@ button{
     font-size: 1.25rem;
     font-weight: bold;
     color: #f8fafc;
-    background-color: #d89ace;
+    background-color: #7F67D6;
     padding: 0.5rem 0;
     border-radius: 3px;
     cursor: pointer;

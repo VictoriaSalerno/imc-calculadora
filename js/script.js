@@ -27,12 +27,33 @@ const CalculadoraIMC = {
         }
     },
 
+    async cargarDatosDesdeAPI() {
+        try {
+            const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+                method: 'GET',
+                mode: 'cors', 
+                headers: {
+                    'Origin': 'https://victoriasalerno.github.io/imc-calculadora/', 
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error al cargar los datos: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Datos cargados desde la API:', data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    },
+
     agregarRegistro: function(nombre, peso, altura, imc, categoria) {
         this.registros.push({ nombre, peso, altura, imc, categoria });
 
         localStorage.setItem("registros", JSON.stringify(this.registros));
     },
-
+    
     cargarRegistrosDesdeLocalStorage: function() {
         const registrosGuardados = localStorage.getItem("registros");
         if (registrosGuardados) {
@@ -42,15 +63,12 @@ const CalculadoraIMC = {
     
     buscarPorNombre: function(nombre) {
         return this.registros.find(persona => persona.nombre === nombre);
-
     },
 
     filtrarPorCategoria: function(categoria) {
         return this.registros.filter(persona => persona.categoria === categoria);
     },
     
-    
-
     mostrarRegistrosEnConsola: function() {
         console.log("Registros almacenados:");
         this.registros.forEach(registro => {
@@ -63,37 +81,40 @@ const CalculadoraIMC = {
         });
     },
 
-          iniciarCalculadora: function() {
-                const formulario = document.getElementById("calculadoraForm");
-                const resultadoDiv = document.getElementById("resultado");
-          
+    iniciarCalculadora() {
+        this.cargarDatosDesdeAPI();
+        const formulario = document.getElementById("calculadoraForm");
+        const resultadoDiv = document.getElementById("resultado");
 
-                formulario.addEventListener("submit", (event) => {
-                    event.preventDefault();
-                    
-                    const nombre = document.getElementById("nombre").value;
-                    const peso = parseFloat(document.getElementById("peso").value);
-                    const altura = parseFloat(document.getElementById("altura").value);
-                    const imc = this.calcularIMC(peso, altura);
-                    const categoria = this.obtenerCategoria(imc);
-                    this.agregarRegistro(nombre, peso, altura, imc, categoria);
+        formulario.addEventListener("submit", (event) => {
+            event.preventDefault();
+            
+            const nombre = document.getElementById("nombre").value;
+            const peso = parseFloat(document.getElementById("peso").value);
+            const altura = parseFloat(document.getElementById("altura").value);
+            const imc = this.calcularIMC(peso, altura);
+            const categoria = this.obtenerCategoria(imc);
+            this.agregarRegistro(nombre, peso, altura, imc, categoria);
 
-                    const resultadoHTML = `
-                        <h2>Resultados para ${nombre}:</h2>
-                        <p>IMC: ${imc.toFixed(2)}</p>
-                        <p>Categoría: ${categoria}</p>
-                    `;
-                    resultadoDiv.innerHTML = resultadoHTML;
+            const resultadoHTML = `
+                <h2>Resultados para ${nombre}:</h2>
+                <p>IMC: ${imc.toFixed(2)}</p>
+                <p>Categoría: ${categoria}</p>
+            `;
+            
+            Swal.fire({
+                title: 'Resultados del IMC',
+                html: resultadoHTML,
+                icon: 'info',
+            });
 
-                    formulario.reset();
-                
-           this.mostrarRegistrosEnConsola()
-           
-                })
-
-        }
-            }
-        
+            formulario.reset();
+            
+            this.mostrarRegistrosEnConsola()
+            
+        });
+    }
+}
 
 CalculadoraIMC.cargarRegistrosDesdeLocalStorage();
 CalculadoraIMC.iniciarCalculadora();
